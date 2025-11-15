@@ -1,67 +1,68 @@
-import { useEffect } from "react";
-import { Trash2, CheckCircle2, Circle } from "lucide-react";
-import Sidebar from "../components/Sidebar";
-import AddTaskModal from "../components/AddTaskModal";
-import useTaskStore from "../store/taskStore";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../api/api";
+import { useUserStore } from "../store/useUser";
+import InputField from "../components/InputField";
+import Button from "../components/Button";
 
-export default function Task() {
-    const { tasks, fetchTasks, addTask, toggleComplete, deleteTask } = useTaskStore();
+export default function Login() {
+    const navigate = useNavigate();
+    const login = useUserStore((state) => state.login);
 
-    useEffect(() => {
-        fetchTasks();
-    }, []);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setError("");
+
+        try {
+            const { data } = await api.post("/auth/login", { username, password });
+            login(data.user);
+            navigate("/dashboard");
+        } catch (err) {
+            setError(err.response?.data?.error || "Error en login");
+        }
+    };
     return (
-        <div className="flex h-screen bg-gray-900 text-white">
-            <Sidebar />
-            <main className="flex-1 p-8 overflow-y-auto">
-                <h1 className="text-3xl font-bold mb-6">Mis Tareas</h1>
-                <ul role="list" className="divide-y divide-white/10">
-                    {tasks.map((task) => (
-                        <li
-                            key={task._id}
-                            className="flex items-center justify-between py-5 px-4 hover:bg-gray-800/50 rounded-xl transition"
-                        >
-                            <div className="flex items-start gap-x-4">
-                                <button
-                                    onClick={() => toggleComplete(task._id, !task.completed)}
-                                    className="mt-1 text-gray-400 hover:text-emerald-400 transition"
-                                >
-                                    {task.completed ? (
-                                        <CheckCircle2 className="size-5 text-emerald-400" />
-                                    ) : (
-                                        <Circle className="size-5" />
-                                    )}
-                                </button>
-                                <div>
-                                    <p
-                                        className={`text-sm font-semibold ${task.completed
-                                            ? "line-through text-gray-500"
-                                            : "text-white"
-                                            }`}
-                                    >
-                                        {task.description}
-                                    </p>
-                                    <p className="mt-1 text-xs text-gray-400">{task.date}</p>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => deleteTask(task._id)}
-                                className="text-gray-400 hover:text-red-500 transition"
-                                title="Eliminar tarea"
-                            >
-                                <Trash2 className="size-5" />
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-                {tasks.length === 0 && (
-                    <p className="text-gray-500 mt-10 text-center">
-                        No tienes tareas pendientes 🎉
-                    </p>
-                )}
-                <AddTaskModal onAddTask={addTask} />
-            </main>
+        <div className="flex items-center justify-center min-h-screen px-4">
+            <div className="w-full max-w-sm bg-gray-800/80 border border-gray-700 rounded-3xl p-8 shadow-xl">
+                <h1 className="text-5xl text-center font-bold text-indigo-400 tracking-wide mb-6 select-none">
+                    Task<span className="text-white">App</span>
+                </h1>
+                <form className="space-y-5" onSubmit={handleLogin}>
+                    <InputField
+                        id="username"
+                        label="Usuario"
+                        placeholder="Tu usuario"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <InputField
+                        id="password"
+                        label="Contraseña"
+                        type="password"
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    <Button type="submit" variant="primary">
+                        Entrar
+                    </Button>
+                </form>
+
+                <p className="mt-8 text-center text-sm text-gray-400">
+                    ¿No tienes usuario?
+                    <a
+                        href="#"
+                        className="text-indigo-400 hover:text-indigo-300 font-semibold ml-1 transition"
+                    >
+                        Crea uno aquí
+                    </a>
+                </p>
+            </div>
         </div>
     );
 }

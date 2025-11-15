@@ -21,10 +21,11 @@ export default function Button({
     return (
         <button
             type={type}
-            onClick={onClick}
+            {...(onClick ? { onClick } : {})}
             className={`w-full rounded-lg py-2.5 font-semibold transition ${styles[variant]} ${className}`}
         >
             {children}
         </button>
     );
 }
+

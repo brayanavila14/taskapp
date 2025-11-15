@@ -1,37 +1,30 @@
 import { create } from "zustand";
-import api from "../api/config";
-import useUserStore from "./userStore";
+import api from "../api/api";
 
 const useTaskStore = create((set) => ({
     tasks: [],
+
     fetchTasks: async () => {
-        const { token } = useUserStore.getState();
         try {
-            const { data } = await api.get("/tasks", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const { data } = await api.get("/tasks");
             set({ tasks: data });
         } catch (err) {
             console.error("Error fetching tasks:", err);
         }
     },
+
     addTask: async (task) => {
-        const { token } = useUserStore.getState();
         try {
-            const { data } = await api.post("/tasks", task, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const { data } = await api.post("/tasks", task);
             set((state) => ({ tasks: [...state.tasks, data] }));
         } catch (err) {
             console.error("Error adding task:", err);
         }
     },
+
     toggleComplete: async (id, completed) => {
-        const { token } = useUserStore.getState();
         try {
-            const { data } = await api.patch(`/tasks/${id}`, { completed }, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const { data } = await api.patch(`/tasks/${id}`, { completed });
             set((state) => ({
                 tasks: state.tasks.map((t) => (t._id === id ? data : t)),
             }));
@@ -39,12 +32,10 @@ const useTaskStore = create((set) => ({
             console.error("Error updating task:", err);
         }
     },
+
     deleteTask: async (id) => {
-        const { token } = useUserStore.getState();
         try {
-            await api.delete(`/tasks/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            await api.delete(`/tasks/${id}`);
             set((state) => ({
                 tasks: state.tasks.filter((t) => t._id !== id),
             }));

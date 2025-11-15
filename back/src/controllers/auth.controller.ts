@@ -8,6 +8,39 @@ const signToken = (id: string): string => {
   return jwt.sign({ id }, secret, { expiresIn } as jwt.SignOptions);
 };
 
+export const login = async (req: Request, res: Response) => {
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+    if (!user) return res.status(401).json({ error: "Credenciales inválidas" });
+
+    const match = await user.comparePassword(password);
+    if (!match)
+      return res.status(401).json({ error: "Credenciales inválidas" });
+
+    const token = signToken((user._id as unknown as string).toString());
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 1000,
+    });
+
+    res.json({
+      user: {
+        id: user._id,
+        username: user.username,
+        name: user.name,
+        isadmin: user.isadmin,
+      },
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ error: "Error en login" });
+  }
+};
+
 export const register = async (req: Request, res: Response) => {
   try {
     const { username, name, password } = req.body;
@@ -27,27 +60,5 @@ export const register = async (req: Request, res: Response) => {
   } catch (err) {
     console.error("Register error:", err);
     res.status(500).json({ error: "Error en registro" });
-  }
-};
-
-export const login = async (req: Request, res: Response) => {
-  try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
-    if (!user) return res.status(401).json({ error: "Credenciales inválidas" });
-
-    const match = await user.comparePassword(password);
-    if (!match)
-      return res.status(401).json({ error: "Credenciales inválidas" });
-
-    const token = signToken((user._id as unknown as string).toString());
-
-    res.json({
-      user: { id: user._id, username: user.username, name: user.name },
-      token,
-    });
-  } catch (err) {
-    console.error("Login error:", err);
-    res.status(500).json({ error: "Error en login" });
   }
 };

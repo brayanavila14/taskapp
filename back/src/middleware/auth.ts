@@ -15,13 +15,10 @@ export const protect = (
   next: NextFunction
 ): Response | void => {
   try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader?.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "No token, autorización denegada" });
+    const token = req.cookies?.token;
+    if (!token) {
+      return res.status(401).json({ error: "No autorizado, token faltante" });
     }
-
-    const token = authHeader.split(" ")[1];
 
     const decoded = jwt.verify(
       token,
@@ -29,6 +26,7 @@ export const protect = (
     ) as TokenPayload;
 
     req.userId = decoded.id;
+
     next();
   } catch (error) {
     return res.status(401).json({ error: "Token inválido o expirado" });

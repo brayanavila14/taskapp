@@ -1,22 +1,22 @@
+import { useUserStore } from "../store/useUser";
 import { Home, Users, Settings, LogOut } from "lucide-react";
 import MenuItem from "./MenuItem";
 import Button from "./Button";
 
 export default function Sidebar() {
-    const isAdmin = false;
+    const { user } = useUserStore();
+
     return (
         <aside className="relative flex flex-col justify-between h-screen w-64 bg-gray-800 border-r border-gray-700 p-5 text-gray-200 overflow-hidden">
-            {/* --- Top section: Logo / Name --- */}
             <div>
                 <h1 className="text-2xl font-bold text-indigo-400 tracking-wide mb-10 select-none">
                     Task<span className="text-white">App</span>
                 </h1>
 
-                {/* --- Menu --- */}
                 <nav className="space-y-2">
-                    <MenuItem icon={<Home size={18} />} text="Inicio" active />
-                    {isAdmin && <MenuItem icon={<Users size={18} />} text="Usuarios" />}
-                    <MenuItem icon={<Settings size={18} />} text="Configuración" />
+                    <MenuItem icon={<Home size={18} />} text="Inicio" active to="/dashboard" />
+                    {user.isadmin && <MenuItem icon={<Users size={18} />} text="Usuarios" to="/users" />}
+                    <MenuItem icon={<Settings size={18} />} text="Configuración" to="/setting" />
                 </nav>
             </div>
 
@@ -43,9 +43,8 @@ export default function Sidebar() {
                 </Button>
             </div>
 
-            {/* --- Marca de agua --- */}
             <p className="absolute bottom-2 left-0 right-0 text-center text-xs text-gray-600 select-none opacity-10 tracking-wide pointer-events-none">
-                by BrayDev
+                by BrayDev 2025
             </p>
         </aside>
     );

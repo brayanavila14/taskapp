@@ -4,6 +4,7 @@ export default function InputField({
     type = "text",
     placeholder = "",
     required = true,
+    onChange
 }) {
     return (
         <div>
@@ -19,6 +20,7 @@ export default function InputField({
                 type={type}
                 required={required}
                 placeholder={placeholder}
+                onChange={onChange}
                 className="mt-2 w-full rounded-lg bg-gray-700 border border-gray-600 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
         </div>
