@@ -1,36 +1,35 @@
 import { Request, Response, NextFunction } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import sanitizeHtml from "sanitize-html";
 
-export interface AuthRequest extends Request {
-  userId?: string;
-}
+const deepClean = (value: any): any => {
+  if (typeof value === "string") {
+    return sanitizeHtml(value, {
+      allowedTags: [],
+      allowedAttributes: {},
+    }).trim();
+  }
 
-interface TokenPayload extends JwtPayload {
-  id: string;
-}
+  if (Array.isArray(value)) {
+    return value.map((v) => deepClean(v));
+  }
 
-export const protect = (
-  req: AuthRequest,
+  if (typeof value === "object" && value !== null) {
+    Object.keys(value).forEach((key) => {
+      value[key] = deepClean(value[key]);
+    });
+  }
+
+  return value;
+};
+
+export const sanitizeHTML = (
+  req: Request,
   res: Response,
   next: NextFunction
-): Response | void => {
-  try {
-    const authHeader = req.headers.authorization;
+) => {
+  if (req.body) deepClean(req.body);
+  if (req.query) deepClean(req.query);
+  if (req.params) deepClean(req.params);
 
-    if (!authHeader?.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "No token, autorización denegada" });
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    ) as TokenPayload;
-
-    req.userId = decoded.id;
-    next();
-  } catch (error) {
-    return res.status(401).json({ error: "Token inválido o expirado" });
-  }
+  next();
 };

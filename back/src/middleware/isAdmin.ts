@@ -1,6 +1,6 @@
 import { Response, NextFunction } from "express";
-import { AuthRequest } from "./auth.js";
-import User from "../models/User.js";
+import { AuthRequest } from "./auth";
+import User from "../models/User";
 
 export const isAdmin = async (
   req: AuthRequest,
@@ -17,8 +17,7 @@ export const isAdmin = async (
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    // Aquí verificamos si el username coincide con el ADMIN del .env
-    if (user.username !== process.env.ADMIN_USERNAME) {
+    if (!user.isadmin) {
       return res
         .status(403)
         .json({ error: "Acceso solo para administradores" });

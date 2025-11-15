@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import User from "../models/User.js";
+import User from "../models/User";
 
 export const listarUsuarios = async (_req: Request, res: Response) => {
   try {
@@ -13,14 +13,27 @@ export const listarUsuarios = async (_req: Request, res: Response) => {
 
 export const actualizarUsuario = async (req: Request, res: Response) => {
   try {
-    const update = req.body;
+    const { name, username, password, isadmin } = req.body;
+
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ error: "Usuario no existe" });
 
-    Object.assign(user, update);
+    if (name) user.name = name;
+    if (username) user.username = username;
+    if (typeof isadmin === "boolean") {
+      user.isadmin = isadmin;
+    }
+    if (password) {
+      user.password = password;
+    }
     await user.save();
 
-    res.json({ id: user._id, username: user.username, name: user.name });
+    res.json({
+      id: user._id,
+      username: user.username,
+      name: user.name,
+      isadmin: user.isadmin,
+    });
   } catch (err: any) {
     console.error("Error al actualizar usuario:", err);
     res.status(500).json({ error: "Error al actualizar usuario" });

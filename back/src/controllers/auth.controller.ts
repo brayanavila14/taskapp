@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+import User from "../models/User";
 
 const signToken = (id: string): string => {
   const secret = process.env.JWT_SECRET as string;
@@ -17,11 +17,13 @@ export const register = async (req: Request, res: Response) => {
     const user = new User({ username, name, password });
     await user.save();
 
-    const token = signToken(user._id.toString());
+    const token = signToken((user._id as unknown as string).toString());
+
     res.status(201).json({
       user: { id: user._id, username: user.username, name: user.name },
       token,
     });
+    console.log("SECRET:", process.env.JWT_SECRET);
   } catch (err) {
     console.error("Register error:", err);
     res.status(500).json({ error: "Error en registro" });
@@ -38,7 +40,8 @@ export const login = async (req: Request, res: Response) => {
     if (!match)
       return res.status(401).json({ error: "Credenciales inválidas" });
 
-    const token = signToken(user._id.toString());
+    const token = signToken((user._id as unknown as string).toString());
+
     res.json({
       user: { id: user._id, username: user.username, name: user.name },
       token,

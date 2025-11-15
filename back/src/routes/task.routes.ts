@@ -1,30 +1,25 @@
 import { Router } from "express";
-import { protect } from "../middleware/auth.js";
+import { body } from "express-validator";
+import { protect } from "../middleware/auth";
+import { runValidation } from "../middleware/validate";
 import {
   crearTarea,
   listarTareas,
   actualizarTarea,
   eliminarTarea,
-} from "../controllers/task.controller.js";
-import { body } from "express-validator";
-import { runValidation } from "../middleware/validate.js";
+} from "../controllers/task.controller";
 
 const router = Router();
 
 router.post(
   "/",
   protect,
-  [body("nombre").isString().notEmpty()],
+  [body("description").isString().notEmpty()],
   runValidation,
   crearTarea
 );
-
 router.get("/", protect, listarTareas);
-
-// ✏️ Actualizar tarea
-router.put("/:id", protect, actualizarTarea);
-
-// ❌ Eliminar tarea
+router.patch("/:id", protect, actualizarTarea);
 router.delete("/:id", protect, eliminarTarea);
 
 export default router;

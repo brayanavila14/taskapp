@@ -7,11 +7,10 @@ function App() {
   return (
     <div className="min-h-screen w-full bg-gray-900 text-white">
       <Routes>
-        {/* Páginas normales */}
+
         <Route path="/" element={<Login />} />
         <Route path="/dashboard" element={<Task />} />
 
-        {/* Ruta comodín */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

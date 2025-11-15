@@ -1,19 +1,19 @@
 import { Response } from "express";
-import Task from "../models/Task.js";
-import { AuthRequest } from "../middleware/auth.js";
+import Task from "../models/Task";
+import { AuthRequest } from "../middleware/auth";
 
 export const crearTarea = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId;
-    const { nombre, fecha, completed } = req.body;
+    const { description, date, completed } = req.body;
 
-    const tarea = new Task({ nombre, fecha, completed, user: userId });
+    const tarea = new Task({ description, date, completed, user: userId });
     await tarea.save();
 
     res.status(201).json({
       id: tarea._id,
-      nombre: tarea.nombre,
-      fecha: tarea.fecha,
+      description: tarea.description,
+      date: tarea.date,
       completed: tarea.completed,
     });
   } catch (err: any) {
@@ -34,16 +34,20 @@ export const actualizarTarea = async (req: AuthRequest, res: Response) => {
   try {
     const tarea = await Task.findById(req.params.id);
     if (!tarea) return res.status(404).json({ error: "Tarea no encontrada" });
+
     if (tarea.user.toString() !== req.userId)
       return res.status(403).json({ error: "Acceso denegado" });
 
-    Object.assign(tarea, req.body);
+    if ("completed" in req.body && typeof req.body.completed === "boolean") {
+      tarea.completed = req.body.completed;
+    }
+
     await tarea.save();
 
     res.json({
       id: tarea._id,
-      nombre: tarea.nombre,
-      fecha: tarea.fecha,
+      description: tarea.description,
+      date: tarea.date,
       completed: tarea.completed,
     });
   } catch (err: any) {
