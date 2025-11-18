@@ -10,7 +10,7 @@ function App() {
 
         <Route path="/" element={<Login />} />
         <Route path="/dashboard" element={<Task />} />
-
+        <Route path="/users" element={<Task />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

@@ -26,7 +26,7 @@ const useTaskStore = create((set) => ({
         try {
             const { data } = await api.patch(`/tasks/${id}`, { completed });
             set((state) => ({
-                tasks: state.tasks.map((t) => (t._id === id ? data : t)),
+                tasks: state.tasks.map((t) => (t.id === id ? data : t)),
             }));
         } catch (err) {
             console.error("Error updating task:", err);
@@ -37,7 +37,7 @@ const useTaskStore = create((set) => ({
         try {
             await api.delete(`/tasks/${id}`);
             set((state) => ({
-                tasks: state.tasks.filter((t) => t._id !== id),
+                tasks: state.tasks.filter((t) => t.id !== id),
             }));
         } catch (err) {
             console.error("Error deleting task:", err);
