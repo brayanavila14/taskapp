@@ -1,52 +1,42 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import User from "../models/User";
+import { AuthRequest } from "../middleware/auth";
 
-export const listarUsuarios = async (_req: Request, res: Response) => {
+export const updateUser = async (req: AuthRequest, res: Response) => {
   try {
-    const users = await User.find().select("-password");
-    res.json(users);
-  } catch (err: any) {
-    console.error("Error al listar usuarios:", err);
-    res.status(500).json({ error: "Error al listar usuarios" });
-  }
-};
+    if (req.userId !== req.params.id) {
+      return res
+        .status(403)
+        .json({ error: "No puedes modificar otro usuario" });
+    }
 
-export const actualizarUsuario = async (req: Request, res: Response) => {
-  try {
-    const { name, username, password, isadmin } = req.body;
-
+    const { name, username, password } = req.body;
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ error: "Usuario no existe" });
 
     if (name) user.name = name;
     if (username) user.username = username;
-    if (typeof isadmin === "boolean") {
-      user.isadmin = isadmin;
-    }
-    if (password) {
-      user.password = password;
-    }
+    if (password) user.password = password;
+
     await user.save();
 
-    res.json({
-      id: user._id,
-      username: user.username,
-      name: user.name,
-      isadmin: user.isadmin,
-    });
-  } catch (err: any) {
-    console.error("Error al actualizar usuario:", err);
+    res.json({ id: user._id, username: user.username, name: user.name });
+  } catch (err) {
     res.status(500).json({ error: "Error al actualizar usuario" });
   }
 };
 
-export const eliminarUsuario = async (req: Request, res: Response) => {
+export const deleteUser = async (req: AuthRequest, res: Response) => {
   try {
+    if (req.userId !== req.params.id) {
+      return res.status(403).json({ error: "No puedes eliminar otro usuario" });
+    }
+
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
     res.json({ message: "Usuario eliminado correctamente" });
-  } catch (err: any) {
-    console.error("Error al eliminar usuario:", err);
+  } catch (err) {
     res.status(500).json({ error: "Error al eliminar usuario" });
   }
 };

@@ -1,16 +1,10 @@
 import { Router } from "express";
 import { protect } from "../middleware/auth";
-import { isAdmin } from "../middleware/isAdmin";
-import {
-  listarUsuarios,
-  actualizarUsuario,
-  eliminarUsuario,
-} from "../controllers/user.controller";
+import { updateUser, deleteUser } from "../controllers/user.controller";
 
 const router = Router();
 
-router.get("/", protect, isAdmin, listarUsuarios);
-router.put("/:id", protect, isAdmin, actualizarUsuario);
-router.delete("/:id", protect, isAdmin, eliminarUsuario);
+router.put("/:id", protect, updateUser);
+router.delete("/:id", protect, deleteUser);
 
 export default router;

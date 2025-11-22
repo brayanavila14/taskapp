@@ -2,7 +2,7 @@ import { Response } from "express";
 import Task from "../models/Task";
 import { AuthRequest } from "../middleware/auth";
 
-export const crearTarea = async (req: AuthRequest, res: Response) => {
+export const createTask = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId;
     const { title, description, date, completed } = req.body;
@@ -28,7 +28,7 @@ export const crearTarea = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const listarTareas = async (req: AuthRequest, res: Response) => {
+export const listTask = async (req: AuthRequest, res: Response) => {
   try {
     const tareas = await Task.find({ user: req.userId });
     const tareasConId = tareas.map((t) => ({
@@ -44,7 +44,7 @@ export const listarTareas = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const actualizarTarea = async (req: AuthRequest, res: Response) => {
+export const completedTask = async (req: AuthRequest, res: Response) => {
   try {
     const tarea = await Task.findById(req.params.id);
     if (!tarea) return res.status(404).json({ error: "Tarea no encontrada" });
@@ -70,7 +70,7 @@ export const actualizarTarea = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const eliminarTarea = async (req: AuthRequest, res: Response) => {
+export const deleteTask = async (req: AuthRequest, res: Response) => {
   try {
     const tarea = await Task.findById(req.params.id);
     if (!tarea) return res.status(404).json({ error: "Tarea no encontrada" });

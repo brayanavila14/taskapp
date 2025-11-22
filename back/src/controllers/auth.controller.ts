@@ -32,7 +32,6 @@ export const login = async (req: Request, res: Response) => {
         id: user._id,
         username: user.username,
         name: user.name,
-        isadmin: user.isadmin,
       },
     });
   } catch (err) {
