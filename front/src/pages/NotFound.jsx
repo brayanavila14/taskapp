@@ -1,8 +1,9 @@
+import { Link } from "react-router-dom";
 import Button from "../components/Button";
 
 export default function NotFound() {
     return (
-        <div className="flex items-center justify-center min-h-screen px-4">
+        <div className="flex items-center justify-center min-h-screen px-4 animate-page">
             <div className="text-center px-6 py-24 sm:py-32 lg:px-8">
                 <p className="text-5xl font-semibold text-indigo-400 sm:text-7xl">404</p>
 
@@ -14,18 +15,12 @@ export default function NotFound() {
                     Lo sentimos, no pudimos encontrar la página que estás buscando.
                 </p>
 
-                <div className="mt-10 flex items-center justify-between">
-                    <div className="w-48">
+                <div className="mt-10 flex items-center justify-center">
+                    <Link to={"/"} className="w-38">
                         <Button variant="primary">
                             Volver al inicio
                         </Button>
-                    </div>
-                    <a
-                        href="#"
-                        className="text-sm font-semibold text-white hover:text-indigo-300 transition"
-                    >
-                        Contactar soporte <span aria-hidden="true">&rarr;</span>
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>

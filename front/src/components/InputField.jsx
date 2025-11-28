@@ -1,5 +1,6 @@
 export default function InputField({
     label,
+    type,
     value,
     onChange,
     placeholder = "",
@@ -21,7 +22,7 @@ export default function InputField({
                 />
             ) : (
                 <input
-                    type="text"
+                    type={type || "text"}
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     className="w-full rounded-md bg-gray-700 text-white px-3 py-2 text-sm 

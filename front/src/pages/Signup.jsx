@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { ArrowBigLeftIcon } from "lucide-react";
 import api from "../api/api";
 import { useUserStore } from "../store/useUser";
 import InputField from "../components/InputField";
@@ -12,6 +12,7 @@ export default function Login() {
     const login = useUserStore((state) => state.login);
 
     const [username, setUsername] = useState("");
+    const [name, setName] = useState("");
     const [password, setPassword] = useState("");
 
     const [modal, setModal] = useState({
@@ -21,7 +22,7 @@ export default function Login() {
         autoClose: 0,
     });
 
-    const showModal = (type, message, time = 1000) => {
+    const showModal = (type, message, time = 2000) => {
         setModal({
             open: true,
             type,
@@ -33,21 +34,21 @@ export default function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        if (!username || !password) return showModal("error", "Faltan campos por rellenar")
+        if (!username || !name || !password) return showModal("error", "Faltan campos por rellenar")
         try {
-            const { data } = await api.post("/auth/login", { username, password });
+            const { data } = await api.post("/auth/register", { username, name, password });
 
             login(data.user);
 
-            showModal("success", "Bienvenido 🎉");
+            showModal("success", "Bienvenido 🎉", 1000);
 
             setTimeout(() => {
                 navigate("/dashboard");
-            }, 2000);
+            }, 1000);
 
         } catch (err) {
-            const msg = err.response?.data?.error || "Error en login";
-            showModal("error", msg);
+            const msg = err.response?.data?.error || "Error en registrar";
+            showModal("error", msg, 2000);
         }
     };
 
@@ -61,7 +62,13 @@ export default function Login() {
                 autoClose={modal.autoClose}
             />
 
+
             <div className="flex items-center justify-center min-h-screen px-4 animate-page">
+                <Link to="/">
+                    <ArrowBigLeftIcon
+                        className="absolute top-5 left-5 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gray-700 cursor-pointer"
+                    />
+                </Link>
                 <div className="w-full max-w-sm bg-gray-800/80 border border-gray-700 rounded-3xl p-8 shadow-xl">
                     <h1 className="text-5xl text-center font-bold text-indigo-400 tracking-wide mb-6 select-none">
                         Task<span className="text-white">App</span>
@@ -75,6 +82,13 @@ export default function Login() {
                             value={username}
                             onChange={setUsername}
                         />
+                        <InputField
+                            id="name"
+                            label="Nombre usuario"
+                            placeholder="ej. Andrés Goméz"
+                            value={name}
+                            onChange={setName}
+                        />
 
                         <InputField
                             id="password"
@@ -86,16 +100,9 @@ export default function Login() {
                         />
 
                         <Button type="submit" variant="primary">
-                            Entrar
+                            Registrar
                         </Button>
                     </form>
-
-                    <p className="mt-8 text-center text-sm text-gray-400">
-                        ¿No tienes usuario?
-                        <Link to="/signup" className="text-indigo-400 hover:text-indigo-300 font-semibold ml-1 transition">
-                            Crea uno aquí
-                        </Link>
-                    </p>
                 </div>
             </div>
             <footer className="absolute bottom-1 right-3 text-center text-xs text-gray-600 select-none opacity-90 tracking-wide pointer-events-none">

@@ -7,21 +7,21 @@ export const createTask = async (req: AuthRequest, res: Response) => {
     const userId = req.userId;
     const { title, description, date, completed } = req.body;
 
-    const tarea = new Task({
+    const task = new Task({
       title,
       description,
       date,
       completed,
       user: userId,
     });
-    await tarea.save();
+    await task.save();
 
     res.status(201).json({
-      id: tarea._id,
-      title: tarea.title,
-      description: tarea.description,
-      date: tarea.date,
-      completed: tarea.completed,
+      id: task._id,
+      title: task.title,
+      description: task.description,
+      date: task.date,
+      completed: task.completed,
     });
   } catch (err: any) {
     res.status(500).json({ error: "Error creando tarea" });
@@ -30,15 +30,15 @@ export const createTask = async (req: AuthRequest, res: Response) => {
 
 export const listTask = async (req: AuthRequest, res: Response) => {
   try {
-    const tareas = await Task.find({ user: req.userId });
-    const tareasConId = tareas.map((t) => ({
+    const task = await Task.find({ user: req.userId });
+    const taskId = task.map((t) => ({
       id: t._id,
       title: t.title,
       description: t.description,
       date: t.date,
       completed: t.completed,
     }));
-    res.json(tareasConId);
+    res.json(taskId);
   } catch (err: any) {
     res.status(500).json({ error: "Error listando tareas" });
   }
@@ -46,24 +46,24 @@ export const listTask = async (req: AuthRequest, res: Response) => {
 
 export const completedTask = async (req: AuthRequest, res: Response) => {
   try {
-    const tarea = await Task.findById(req.params.id);
-    if (!tarea) return res.status(404).json({ error: "Tarea no encontrada" });
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ error: "Tarea no encontrada" });
 
-    if (tarea.user.toString() !== req.userId)
+    if (task.user.toString() !== req.userId)
       return res.status(403).json({ error: "Acceso denegado" });
 
     if ("completed" in req.body && typeof req.body.completed === "boolean") {
-      tarea.completed = req.body.completed;
+      task.completed = req.body.completed;
     }
 
-    await tarea.save();
+    await task.save();
 
     res.json({
-      id: tarea._id,
-      title: tarea.title,
-      description: tarea.description,
-      date: tarea.date,
-      completed: tarea.completed,
+      id: task._id,
+      title: task.title,
+      description: task.description,
+      date: task.date,
+      completed: task.completed,
     });
   } catch (err: any) {
     res.status(500).json({ error: "Error actualizando tarea" });
@@ -72,14 +72,15 @@ export const completedTask = async (req: AuthRequest, res: Response) => {
 
 export const deleteTask = async (req: AuthRequest, res: Response) => {
   try {
-    const tarea = await Task.findById(req.params.id);
-    if (!tarea) return res.status(404).json({ error: "Tarea no encontrada" });
-    if (tarea.user.toString() !== req.userId)
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ error: "Tarea no encontrada" });
+
+    if (task.user.toString() !== req.userId)
       return res.status(403).json({ error: "Acceso denegado" });
 
-    await tarea.deleteOne();
+    await task.deleteOne();
     res.json({
-      id: tarea._id,
+      id: task._id,
       message: "Tarea eliminada",
     });
   } catch (err: any) {

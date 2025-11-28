@@ -17,7 +17,7 @@ export default function Task() {
     return (
         <div className="flex h-screen bg-gray-900 text-white">
             <Sidebar />
-            <main className="flex-1 p-8 overflow-y-auto">
+            <main className="flex-1 p-8 overflow-y-auto animate-page">
                 <h1 className="text-3xl font-bold mb-6">Mis Tareas</h1>
 
                 <ul role="list" className="divide-y divide-white/10">
@@ -73,10 +73,10 @@ export default function Task() {
                 )}
 
                 <AddTaskModal onAddTask={addTask} />
-                <p className="absolute bottom-1 right-3 text-center text-xs text-gray-600 select-none opacity-90 tracking-wide pointer-events-none">
-                    by BrayDev 2025
-                </p>
             </main>
-        </div>
+            <footer className="absolute bottom-1 right-3 text-center text-xs text-gray-600 select-none opacity-90 tracking-wide pointer-events-none">
+                © 2025 BrayDev. Todos los derechos reservados.
+            </footer>
+        </div >
     );
 }

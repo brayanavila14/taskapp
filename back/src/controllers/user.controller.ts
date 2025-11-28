@@ -10,17 +10,28 @@ export const updateUser = async (req: AuthRequest, res: Response) => {
         .json({ error: "No puedes modificar otro usuario" });
     }
 
-    const { name, username, password } = req.body;
+    const { name, username, originPass, newPass } = req.body;
+    console.log("contrraseña:", originPass);
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ error: "Usuario no existe" });
+    console.log("contrraseña:", originPass);
+    const valid = await user.comparePassword(originPass);
+    console.log("compare result:", valid);
+    if (!valid) {
+      return res.status(400).json({ error: "Contraseña actual incorrecta" });
+    }
 
     if (name) user.name = name;
     if (username) user.username = username;
-    if (password) user.password = password;
+    if (newPass) user.password = newPass;
 
     await user.save();
 
-    res.json({ id: user._id, username: user.username, name: user.name });
+    res.json({
+      id: user._id,
+      username: user.username,
+      name: user.name,
+    });
   } catch (err) {
     res.status(500).json({ error: "Error al actualizar usuario" });
   }
