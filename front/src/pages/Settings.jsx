@@ -4,7 +4,7 @@ import Button from "../components/Button";
 import { useState } from "react";
 import api from "../api/api";
 import { useUserStore } from "../store/useUser";
-import Toast from "../components/toast";
+import Toast from "../components/Toast";
 import Modal from "../components/Modal";
 
 export default function Settings() {

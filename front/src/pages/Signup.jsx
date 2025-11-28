@@ -5,7 +5,7 @@ import api from "../api/api";
 import { useUserStore } from "../store/useUser";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
-import Toast from "../components/toast";
+import Toast from "../components/Toast";
 
 export default function Login() {
     const navigate = useNavigate();
