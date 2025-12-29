@@ -44,6 +44,10 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   res.status(500).json({ error: "Ocurrió un error interno en el servidor." });
 });
 
-app.listen(PORT, () =>
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`)
-);
+if (require.main === module) {
+  app.listen(PORT, () =>
+    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`)
+  );
+}
+
+export default app;
