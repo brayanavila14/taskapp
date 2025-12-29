@@ -28,10 +28,10 @@ userSchema.pre<IUser>("save", async function (next) {
   }
 });
 
-userSchema.methods.comparePassword = function (
+userSchema.methods.comparePassword = async function (
   candidate: string
 ): Promise<boolean> {
-  return bcrypt.compare(candidate, this.password);
+  return await bcrypt.compare(candidate, this.password);
 };
 
 const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);
