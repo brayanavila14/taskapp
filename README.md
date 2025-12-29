@@ -67,10 +67,6 @@ El proyecto está dividido en dos directorios principales:
 │
 └── README.md
 
-# 🚀 Proyecto Fullstack (Backend + Frontend)
-
-Este proyecto está compuesto por un **backend** y un **frontend**, pensados para ejecutarse de manera independiente pero conectados entre sí.
-
 ---
 
 ## 🚀 Instalación y Uso Local
